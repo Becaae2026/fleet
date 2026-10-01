@@ -135,7 +135,7 @@ td.num{text-align:right}
 <body>
 
 <!-- LOGIN -->
-<div id="login" class="login-wrap">
+<div id="login" class="login-wrap hidden">
   <div class="login-card">
     <div class="login-head"><div id="lLogo"></div><div class="org">%%ORG%%</div><div class="ttl">%%TITLE%%</div></div>
     <form class="login-body" onsubmit="return doLogin(event)">
@@ -235,7 +235,7 @@ td.num{text-align:right}
 
     <!-- ADMINISTRATION -->
     <section id="tab-admin" class="tab hidden">
-      <div class="panel">
+      <div class="panel" id="usersPanel">
         <div class="head-row"><h3>Users</h3><button class="btn sm" onclick="userForm(null)">+ Add user</button></div>
         <div class="tbl-wrap"><table><thead><tr><th>Username</th><th>Full name</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr></thead>
           <tbody id="uBody"></tbody></table></div>
@@ -560,9 +560,10 @@ function delDoc(id){
 /* ---------- administration ---------- */
 function loadAdmin(){
   if(!isAdmin())return;
+  el('usersPanel').classList.toggle('hidden',!LOGIN);
   el('sNear').value=S.data.nearDays;el('sEmails').value=S.data.alertEmails||'';
   el('aLinks').innerHTML='<a href="'+esc(S.data.sheetUrl)+'" target="_blank" rel="noopener">Open data sheet (Google Sheets)</a><br><a href="'+esc(S.data.folderUrl)+'" target="_blank" rel="noopener">Open files and backups folder (Google Drive)</a>';
-  loadUsers();loadAudit();
+  if(LOGIN)loadUsers();loadAudit();
 }
 function loadUsers(){
   call('listUsers',S.token).then(function(u){S.users=u;
@@ -652,11 +653,18 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()
 setInterval(function(){if(LOGIN&&S.token&&Date.now()-S.last>IDLE_MIN*60000)logout('You were signed out after '+IDLE_MIN+' minutes of inactivity.');},30000);
 (function(){
   if(LOGO_URL){var img='<img src="'+esc(LOGO_URL)+'" alt="%%ORG%%">';el('lLogo').innerHTML=img;el('hLogo').innerHTML=img;}
-  var t=LOGIN?recall('vm_t'):'open';
-  if(t){S.token=t;el('login').classList.add('hidden');
+  if(!LOGIN){
+    S.token='open';el('app').classList.remove('hidden');
+    call('getData','open').then(function(d){S.data=d;enrich();showApp();render();})
+      .catch(function(e){el('tabs').innerHTML='';el('tab-dashboard').classList.remove('hidden');
+        el('tab-dashboard').innerHTML='<div class="panel"><h3>Unable to load data</h3><p>'+esc(e.message.replace(/^Error:\s*/,''))+'</p></div>';});
+    return;
+  }
+  var t=recall('vm_t');
+  if(t){S.token=t;
     call('getData',t).then(function(d){S.data=d;enrich();showApp();render();})
       .catch(function(e){if(e.message.indexOf('PASSWORD_CHANGE_REQUIRED')<0&&e.message.indexOf('SESSION_EXPIRED')<0)endSession('');});}
-  else el('lUser').focus();
+  else{el('login').classList.remove('hidden');el('lUser').focus();}
 })();
 </script>
 </body></html>
