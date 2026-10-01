@@ -153,7 +153,7 @@ td.num{text-align:right}
   <header class="top">
     <div class="brand"><span id="hLogo"></span><div><div class="org">%%ORG%%</div><div class="ttl">%%TITLE%%</div></div></div>
     <div class="who"><span id="hToday"></span><span id="hUser"></span><span id="hRole" class="role"></span>
-      <button onclick="openChangePw(false)">Change password</button><button onclick="logout()">Sign out</button></div>
+      <button class="auth" onclick="openChangePw(false)">Change password</button><button class="auth" onclick="logout()">Sign out</button></div>
   </header>
   <nav class="tabs" id="tabs"></nav>
   <main>
@@ -270,7 +270,7 @@ td.num{text-align:right}
 <div id="toast" class="toast hidden"></div>
 
 <script>
-var LOGO_URL=%%LOGO_JSON%%, MAX_MB=%%MAX_MB%%, IDLE_MIN=%%IDLE_MIN%%;
+var LOGIN=%%LOGIN_JSON%%, LOGO_URL=%%LOGO_JSON%%, MAX_MB=%%MAX_MB%%, IDLE_MIN=%%IDLE_MIN%%;
 var S={token:null,data:null,tab:'dashboard',editId:null,busy:0,last:Date.now(),locked:false,users:[]};
 var FIELDS=[{k:'daftar',l:'Daftar'},{k:'insurance',l:'Insurance'},{k:'license',l:'Driving Licence'},{k:'civilExpiry',l:'Civil ID'}];
 var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -318,6 +318,7 @@ function doLogin(ev){
   return false;
 }
 function endSession(msg){
+  if(!LOGIN){if(msg)toast(msg,'err');return;}
   S.token=null;S.data=null;S.editId=null;store('vm_t',null);S.locked=false;closeModal(true);
   el('app').classList.add('hidden');el('login').classList.remove('hidden');el('lErr').textContent=msg||'';
 }
@@ -336,6 +337,7 @@ function showApp(){
   el('login').classList.add('hidden');el('app').classList.remove('hidden');
   el('hUser').textContent=S.data.user.fullName||S.data.user.username;el('hRole').textContent=S.data.user.role;
   el('hToday').textContent='Today: '+dd(S.data.today);
+  if(!LOGIN){Array.prototype.forEach.call(document.querySelectorAll('.auth'),function(b){b.classList.add('hidden');});el('hUser').textContent='';el('hRole').classList.add('hidden');}
   var t=[['dashboard','Dashboard'],['vehicles','Vehicles'],['alerts','Alerts']];
   if(canEdit())t.push(['manage','Data Management']);if(isAdmin())t.push(['admin','Administration']);
   if(!t.some(function(x){return x[0]===S.tab;}))S.tab='dashboard';
@@ -647,10 +649,10 @@ function confirmBox(msg,label){
 /* ---------- init ---------- */
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 ['click','keydown','mousemove','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,function(){S.last=Date.now();},{passive:true});});
-setInterval(function(){if(S.token&&Date.now()-S.last>IDLE_MIN*60000)logout('You were signed out after '+IDLE_MIN+' minutes of inactivity.');},30000);
+setInterval(function(){if(LOGIN&&S.token&&Date.now()-S.last>IDLE_MIN*60000)logout('You were signed out after '+IDLE_MIN+' minutes of inactivity.');},30000);
 (function(){
   if(LOGO_URL){var img='<img src="'+esc(LOGO_URL)+'" alt="%%ORG%%">';el('lLogo').innerHTML=img;el('hLogo').innerHTML=img;}
-  var t=recall('vm_t');
+  var t=LOGIN?recall('vm_t'):'open';
   if(t){S.token=t;el('login').classList.add('hidden');
     call('getData',t).then(function(d){S.data=d;enrich();showApp();render();})
       .catch(function(e){if(e.message.indexOf('PASSWORD_CHANGE_REQUIRED')<0&&e.message.indexOf('SESSION_EXPIRED')<0)endSession('');});}
