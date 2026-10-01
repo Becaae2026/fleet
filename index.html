@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+:root{--royal:#002664;--bright:#0083BE;--gray:#8B8D8E;--bg:#F2F4F8;--card:#FFFFFF;--text:#16213A;--muted:#5F6B7A;--line:#DCE2EA;
+--red:#B3261E;--redbg:#FCEBEA;--amber:#9A5B00;--amberbg:#FFF3DC;--green:#1E6B34;--greenbg:#E6F4EA;--graybg:#EDEFF2;--tint:#E6F2F9}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Verdana,Geneva,sans-serif;font-size:13px;line-height:1.45}
+button,input,select,textarea{font-family:inherit;font-size:13px}
+.hidden{display:none!important}
+a{color:var(--bright)}
+h2{font-size:17px;margin:0 0 12px;color:var(--royal)}
+h3{font-size:14px;margin:0 0 10px;color:var(--royal)}
+h4{font-size:13px;margin:18px 0 8px;color:var(--royal)}
+/* login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.login-card{width:100%;max-width:380px;background:var(--card);border-radius:10px;box-shadow:0 6px 24px rgba(0,38,100,.12);overflow:hidden}
+.login-head{background:var(--royal);color:#fff;padding:22px 24px}
+.login-head .org{font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.login-head .ttl{font-size:17px;font-weight:bold;margin-top:4px}
+.login-head img{max-height:40px;display:block;margin-bottom:10px}
+.login-body{padding:22px 24px}
+.login-foot{padding:0 24px 18px;color:var(--muted);font-size:11px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--bright);outline-offset:-1px;border-color:var(--bright)}
+textarea{min-height:70px;resize:vertical}
+.err{color:var(--red);font-size:12px;min-height:16px;margin-top:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--royal);background:var(--royal);color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:bold;white-space:nowrap}
+.btn:hover{background:#0B3A86}
+.btn.sec{background:#fff;color:var(--royal)}
+.btn.sec:hover{background:var(--tint)}
+.btn.danger{background:#fff;color:var(--red);border-color:var(--red)}
+.btn.danger:hover{background:var(--redbg)}
+.btn.sm{padding:4px 9px;font-size:12px;font-weight:normal}
+.btn.full{width:100%;justify-content:center;margin-top:16px;padding:10px}
+.btn[disabled]{opacity:.5;cursor:default}
+/* shell */
+.top{background:var(--royal);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{max-height:34px}
+.brand .org{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.brand .ttl{font-size:16px;font-weight:bold}
+.who{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px}
+.who .role{background:var(--bright);padding:2px 8px;border-radius:10px;font-size:11px}
+.who button{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px}
+.who button:hover{background:rgba(255,255,255,.12)}
+.tabs{background:#fff;border-bottom:1px solid var(--line);display:flex;gap:2px;padding:0 12px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:13px 14px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;font-weight:bold}
+.tabs button.on{color:var(--royal);border-bottom-color:var(--bright)}
+.tabs .badge{background:var(--red);color:#fff;border-radius:9px;padding:1px 6px;font-size:10px;margin-left:5px}
+main{max-width:1320px;margin:0 auto;padding:18px 16px 40px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 160px}
+.row>.btn{flex:0 0 auto}
+.head-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.head-row h2,.head-row h3{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:11px}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--royal);border-radius:10px;padding:16px;cursor:pointer;transition:box-shadow .15s}
+.card:hover{box-shadow:0 4px 16px rgba(0,38,100,.10)}
+.card .k{font-size:12px;color:var(--muted);font-weight:bold;text-transform:uppercase;letter-spacing:.04em}
+.card .v{font-size:30px;font-weight:bold;margin:6px 0 2px;color:var(--royal)}
+.card .s{font-size:11px;color:var(--muted)}
+.card.active{border-left-color:var(--green)}.card.active .v{color:var(--green)}
+.card.near{border-left-color:#E08A00}.card.near .v{color:var(--amber)}
+.card.expired{border-left-color:var(--red)}.card.expired .v{color:var(--red)}
+.card.total{border-left-color:var(--bright)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid2>.panel{margin-bottom:0}
+/* tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;background:#fff}
+th{background:var(--royal);color:#fff;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.03em;padding:9px 10px;white-space:nowrap}
+td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--tint)}
+td.num{text-align:right}
+.empty{text-align:center;color:var(--muted);padding:26px}
+.chip{display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;white-space:nowrap;font-weight:bold}
+.chip.active{background:var(--greenbg);color:var(--green)}
+.chip.near{background:var(--amberbg);color:var(--amber)}
+.chip.expired{background:var(--redbg);color:var(--red)}
+.chip.missing{background:var(--graybg);color:var(--muted);font-weight:normal}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;background:var(--tint);color:var(--royal);font-size:11px;white-space:nowrap}
+.mini-list .it{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.mini-list .it:first-child{border-top:0}
+.mini-list .it:hover{background:var(--tint)}
+.mini-list .l b{color:var(--royal)}
+.note{background:var(--tint);border-radius:8px;padding:10px 12px;color:var(--royal);font-size:12px;margin-bottom:12px}
+/* manage */
+.mgrid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+.vlist{max-height:640px;overflow-y:auto;margin-top:10px;border:1px solid var(--line);border-radius:8px}
+.vlist .it{padding:9px 12px;border-top:1px solid var(--line);cursor:pointer}
+.vlist .it:first-child{border-top:0}
+.vlist .it:hover{background:var(--tint)}
+.vlist .it.on{background:var(--royal);color:#fff}
+.vlist .it.on .muted{color:#D6E2F5}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0 14px}
+.fgrid .wide{grid-column:1/-1}
+.req{color:var(--red)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.docrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.docrow:first-child{border-top:0}
+.docrow .nm{word-break:break-all}
+.docrow .bt{display:flex;gap:6px;flex-wrap:wrap}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,20,50,.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow-y:auto}
+.modal-box{background:#fff;border-radius:10px;width:100%;max-width:520px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.modal-box.wide{max-width:860px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.modal-head h3{margin:0}
+.modal-head .x{border:0;background:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1}
+.modal-body{padding:16px 18px 20px}
+.dgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
+.dgrid .kv .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.dgrid .kv .v{font-weight:bold;margin-top:2px;word-break:break-word}
+.vstat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vstat .b{border:1px solid var(--line);border-radius:8px;padding:10px}
+.vstat .b .k{font-size:11px;color:var(--muted);margin-bottom:6px}
+.vstat .b .d{font-size:11px;margin-top:6px;color:var(--muted)}
+.preview{max-width:100%;max-height:70vh;display:block;margin:0 auto;border-radius:6px}
+.code{font-family:Consolas,monospace;font-size:18px;background:var(--tint);color:var(--royal);padding:12px;border-radius:8px;text-align:center;letter-spacing:.08em;user-select:all}
+/* overlays */
+.busy{position:fixed;inset:0;background:rgba(255,255,255,.55);z-index:80;display:flex;align-items:center;justify-content:center}
+.spin{width:38px;height:38px;border:4px solid var(--tint);border-top-color:var(--royal);border-radius:50%;animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--royal);color:#fff;padding:11px 18px;border-radius:8px;z-index:90;max-width:calc(100% - 32px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.toast.err{background:var(--red)}
+@media (max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.grid2,.mgrid{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr 1fr}.vstat{grid-template-columns:1fr 1fr}.vlist{max-height:260px}}
+@media (max-width:600px){.cards{grid-template-columns:1fr 1fr}.card .v{font-size:24px}.fgrid,.dgrid{grid-template-columns:1fr}.top{padding:12px 16px}main{padding:14px 12px 40px}}
+</style></head>
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login-wrap">
+  <div class="login-card">
+    <div class="login-head"><div id="lLogo"></div><div class="org">%%ORG%%</div><div class="ttl">%%TITLE%%</div></div>
+    <form class="login-body" onsubmit="return doLogin(event)">
+      <label for="lUser">Username</label><input id="lUser" autocomplete="username" required>
+      <label for="lPass">Password</label><input id="lPass" type="password" autocomplete="current-password" required>
+      <button class="btn full" type="submit">Sign in</button>
+      <div id="lErr" class="err"></div>
+    </form>
+    <div class="login-foot">Authorised users only. All access is recorded.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="brand"><span id="hLogo"></span><div><div class="org">%%ORG%%</div><div class="ttl">%%TITLE%%</div></div></div>
+    <div class="who"><span id="hToday"></span><span id="hUser"></span><span id="hRole" class="role"></span>
+      <button onclick="openChangePw(false)">Change password</button><button onclick="logout()">Sign out</button></div>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main>
+    <!-- DASHBOARD -->
+    <section id="tab-dashboard" class="tab"></section>
+
+    <!-- VEHICLES -->
+    <section id="tab-vehicles" class="tab hidden">
+      <div class="panel">
+        <div class="head-row"><h2>Vehicles</h2>
+          <button class="btn sec sm" onclick="exportVehicles()">Download CSV</button></div>
+        <div class="row">
+          <div><label>Search</label><input id="fSearch" placeholder="Reg. no., owner, model, Civil ID…" oninput="renderVehicleTable()"></div>
+          <div><label>Department / Section</label><select id="fDept" onchange="renderVehicleTable()"></select></div>
+          <div><label>Document</label><select id="fDoc" onchange="renderVehicleTable()">
+            <option value="">All documents</option><option value="daftar">Daftar</option><option value="insurance">Insurance</option>
+            <option value="license">Driving Licence</option><option value="civilExpiry">Civil ID</option></select></div>
+          <div><label>Expiry status</label><select id="fStatus" onchange="renderVehicleTable()">
+            <option value="">Any status</option><option value="expired">Expired</option><option value="near">Near expiry</option>
+            <option value="active">All active</option><option value="missing">Date not recorded</option></select></div>
+          <div><label>Sort by</label><select id="fSort" onchange="renderVehicleTable()">
+            <option value="urgent">Most urgent first</option><option value="reg">Registration No.</option><option value="owner">Owner</option><option value="dept">Department</option></select></div>
+          <button class="btn sec" onclick="resetFilters()">Clear</button>
+        </div>
+      </div>
+      <div class="muted small" id="vCount" style="margin:0 0 8px 2px"></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Reg. No.</th><th>Vehicle</th><th>Department</th><th>Owner</th>
+        <th>Daftar</th><th>Insurance</th><th>Driving Licence</th><th>Civil ID</th><th>Files</th><th></th></tr></thead>
+        <tbody id="vBody"></tbody></table></div>
+    </section>
+
+    <!-- ALERTS -->
+    <section id="tab-alerts" class="tab hidden">
+      <div class="panel"><div class="row">
+        <div><label>Search</label><input id="aSearch" placeholder="Reg. no., owner…" oninput="renderAlerts()"></div>
+        <div><label>Department / Section</label><select id="aDept" onchange="renderAlerts()"></select></div>
+        <div><label>Document</label><select id="aDoc" onchange="renderAlerts()">
+          <option value="">All documents</option><option value="daftar">Daftar</option><option value="insurance">Insurance</option>
+          <option value="license">Driving Licence</option><option value="civilExpiry">Civil ID</option></select></div>
+      </div></div>
+      <div class="panel" id="nearSec"></div>
+      <div class="panel" id="expiredSec"></div>
+    </section>
+
+    <!-- DATA MANAGEMENT -->
+    <section id="tab-manage" class="tab hidden">
+      <div class="mgrid">
+        <div class="panel">
+          <div class="head-row"><h3>Vehicle records</h3><button class="btn sm" onclick="newVehicle()">+ New vehicle</button></div>
+          <input id="mSearch" placeholder="Search records…" oninput="renderManageList()">
+          <div class="vlist" id="mList"></div>
+        </div>
+        <div>
+          <form class="panel" id="mForm" onsubmit="return saveForm(event)" autocomplete="off">
+            <div class="head-row"><h3 id="mTitle">Add new vehicle</h3><span class="muted small" id="mMeta"></span></div>
+            <div class="fgrid">
+              <div><label>Vehicle model <span class="req">*</span></label><input id="mModel" maxlength="80" required></div>
+              <div><label>Year of manufacture</label><input id="mYear" type="number" min="1950" max="2100" step="1"></div>
+              <div><label>Registration No. <span class="req">*</span></label><input id="mReg" maxlength="30" required></div>
+              <div><label>Department / Section</label><input id="mDept" list="deptList" maxlength="80"><datalist id="deptList"></datalist></div>
+              <div><label>Owner <span class="req">*</span></label><input id="mOwner" maxlength="100" required></div>
+              <div><label>Designation</label><input id="mDesig" maxlength="80"></div>
+              <div><label>Vehicle Daftar expiry</label><input id="mDaftar" type="date"></div>
+              <div><label>Comprehensive insurance expiry</label><input id="mIns" type="date"></div>
+              <div><label>Driving licence expiry</label><input id="mLic" type="date"></div>
+              <div><label>Owner Civil ID No.</label><input id="mCivil" inputmode="numeric" maxlength="12" placeholder="12 digits"></div>
+              <div><label>Owner Civil ID expiry</label><input id="mCivilExp" type="date"></div>
+              <div></div>
+              <div class="wide"><label>Remarks</label><textarea id="mRemarks" maxlength="1000"></textarea></div>
+            </div>
+            <div class="actions"><button class="btn" type="submit" id="mSave">Save vehicle</button>
+              <button class="btn sec" type="button" onclick="newVehicle()">Clear form</button>
+              <button class="btn danger" type="button" id="mDel" onclick="delVehicle()">Delete vehicle</button></div>
+          </form>
+          <div class="panel" id="mDocs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMINISTRATION -->
+    <section id="tab-admin" class="tab hidden">
+      <div class="panel">
+        <div class="head-row"><h3>Users</h3><button class="btn sm" onclick="userForm(null)">+ Add user</button></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Username</th><th>Full name</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr></thead>
+          <tbody id="uBody"></tbody></table></div>
+      </div>
+      <div class="grid2">
+        <form class="panel" onsubmit="return saveSettingsForm(event)">
+          <h3>Alert settings</h3>
+          <label>Near-expiry window (days)</label><input id="sNear" type="number" min="1" max="365" required>
+          <label>Daily email digest recipients (comma-separated, blank = off)</label><input id="sEmails" placeholder="name@company.com, …">
+          <div class="actions"><button class="btn" type="submit">Save settings</button></div>
+        </form>
+        <div class="panel">
+          <h3>Backup and storage</h3>
+          <p class="muted">Records are stored in Google Sheets and files in Google Drive. A full copy of the data sheet is saved automatically every day at 06:00 (last 30 kept).</p>
+          <div class="actions"><button class="btn" onclick="runBackup()">Run backup now</button></div>
+          <div id="aLinks" style="margin-top:14px"></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <div class="head-row"><h3>Audit log (latest 300)</h3><button class="btn sec sm" onclick="loadAudit()">Refresh</button></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody id="auBody"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modalBox"><div class="modal-head"><h3 id="modalTitle"></h3><button class="x" id="modalX" onclick="closeModal()" aria-label="Close">×</button></div>
+  <div class="modal-body" id="modalBody"></div></div>
+</div>
+<div id="busy" class="busy hidden"><div class="spin"></div></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+var LOGO_URL=%%LOGO_JSON%%, MAX_MB=%%MAX_MB%%, IDLE_MIN=%%IDLE_MIN%%;
+var S={token:null,data:null,tab:'dashboard',editId:null,busy:0,last:Date.now(),locked:false,users:[]};
+var FIELDS=[{k:'daftar',l:'Daftar'},{k:'insurance',l:'Insurance'},{k:'license',l:'Driving Licence'},{k:'civilExpiry',l:'Civil ID'}];
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MIME={pdf:'application/pdf',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',heic:'image/heic',heif:'image/heif'};
+
+/* ---------- utilities ---------- */
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function js(s){return esc(JSON.stringify(String(s)));}
+function store(k,v){try{if(v==null)sessionStorage.removeItem(k);else sessionStorage.setItem(k,v);}catch(e){}}
+function recall(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
+function busy(on){S.busy=Math.max(0,S.busy+(on?1:-1));el('busy').classList.toggle('hidden',S.busy===0);}
+function toast(msg,type){var t=el('toast');t.textContent=msg;t.className='toast '+(type||'');clearTimeout(toast.t);toast.t=setTimeout(function(){t.className='toast hidden';},4000);}
+function fail(e){var m=(e&&e.message)||String(e);if(m.indexOf('SESSION_EXPIRED')>-1||m.indexOf('PASSWORD_CHANGE_REQUIRED')>-1)return;toast(m.replace(/^Error:\s*/,''),'err');}
+function call(fn){
+  var args=Array.prototype.slice.call(arguments,1);busy(true);
+  return new Promise(function(res,rej){
+    google.script.run.withSuccessHandler(function(r){busy(false);res(r);})
+      .withFailureHandler(function(e){busy(false);var m=(e&&e.message)||String(e);
+        if(m.indexOf('SESSION_EXPIRED')>-1)endSession('Your session has expired. Please sign in again.');
+        else if(m.indexOf('PASSWORD_CHANGE_REQUIRED')>-1)openChangePw(true);
+        rej(new Error(m));})[fn].apply(null,args);
+  });
+}
+function dnum(s){var p=s.split('-');return Date.UTC(+p[0],+p[1]-1,+p[2])/86400000;}
+function stat(s){if(!s)return{s:'missing',d:null};var d=dnum(s)-dnum(S.data.today);if(d<0)return{s:'expired',d:d};if(d<=S.data.nearDays)return{s:'near',d:d};return{s:'active',d:d};}
+function dd(s){if(!s)return'Not recorded';var p=s.split('-');return p[2]+' '+MONTHS[+p[1]-1]+' '+p[0];}
+function daysTxt(st){if(st.d===null)return'Date not recorded';if(st.d<0)return Math.abs(st.d)+(st.d===-1?' day':' days')+' overdue';if(st.d===0)return'Expires today';return st.d+(st.d===1?' day':' days')+' left';}
+function chip(st,date){return '<span class="chip '+st.s+'" title="'+esc(daysTxt(st))+'">'+esc(date?dd(date):'—')+'</span>';}
+function findV(id){for(var i=0;i<S.data.vehicles.length;i++)if(S.data.vehicles[i].id===id)return S.data.vehicles[i];return null;}
+function role(){return S.data&&S.data.user.role;}
+function canEdit(){return role()==='Admin'||role()==='Editor';}
+function isAdmin(){return role()==='Admin';}
+function kb(n){return n>=1024?(n/1024).toFixed(1)+' MB':n+' KB';}
+function deptOptions(sel){var cur=el(sel).value,ds={};S.data.vehicles.forEach(function(v){if(v.department)ds[v.department]=1;});
+  el(sel).innerHTML='<option value="">All departments</option>'+Object.keys(ds).sort().map(function(d){return '<option'+(d===cur?' selected':'')+'>'+esc(d)+'</option>';}).join('');}
+
+/* ---------- session ---------- */
+function doLogin(ev){
+  ev.preventDefault();el('lErr').textContent='';
+  call('login',el('lUser').value,el('lPass').value).then(function(r){
+    S.token=r.token;store('vm_t',r.token);el('lPass').value='';
+    if(r.user.mustChange){el('login').classList.add('hidden');openChangePw(true);}else loadData();
+  }).catch(function(e){el('lErr').textContent=e.message.replace(/^Error:\s*/,'');});
+  return false;
+}
+function endSession(msg){
+  S.token=null;S.data=null;S.editId=null;store('vm_t',null);S.locked=false;closeModal(true);
+  el('app').classList.add('hidden');el('login').classList.remove('hidden');el('lErr').textContent=msg||'';
+}
+function logout(msg){var t=S.token;if(t)google.script.run.logout(t);endSession(msg||'');}
+function loadData(){
+  return call('getData',S.token).then(function(d){S.data=d;enrich();showApp();render();}).catch(fail);
+}
+function enrich(){
+  var rank={expired:0,near:1,missing:2,active:3};
+  S.data.vehicles.forEach(function(v){
+    v.st={};v.worst='active';v.minDays=Infinity;
+    FIELDS.forEach(function(f){var st=stat(v[f.k]);v.st[f.k]=st;if(rank[st.s]<rank[v.worst])v.worst=st.s;if(st.d!==null&&st.d<v.minDays)v.minDays=st.d;});
+  });
+}
+function showApp(){
+  el('login').classList.add('hidden');el('app').classList.remove('hidden');
+  el('hUser').textContent=S.data.user.fullName||S.data.user.username;el('hRole').textContent=S.data.user.role;
+  el('hToday').textContent='Today: '+dd(S.data.today);
+  var t=[['dashboard','Dashboard'],['vehicles','Vehicles'],['alerts','Alerts']];
+  if(canEdit())t.push(['manage','Data Management']);if(isAdmin())t.push(['admin','Administration']);
+  if(!t.some(function(x){return x[0]===S.tab;}))S.tab='dashboard';
+  var n=0;allItems().forEach(function(i){if(i.st.s==='near'||i.st.s==='expired')n++;});
+  el('tabs').innerHTML=t.map(function(x){return '<button data-tab="'+x[0]+'" onclick="showTab(\''+x[0]+'\')">'+x[1]+(x[0]==='alerts'&&n?'<span class="badge">'+n+'</span>':'')+'</button>';}).join('');
+}
+function showTab(t){
+  S.tab=t;
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(s){s.classList.toggle('hidden',s.id!=='tab-'+t);});
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===t);});
+  if(t==='admin')loadAdmin();
+  window.scrollTo(0,0);
+}
+function render(){renderDashboard();renderVehicles();renderAlerts();if(canEdit())renderManage();showTab(S.tab);}
+
+/* ---------- dashboard ---------- */
+function allItems(){var out=[];S.data.vehicles.forEach(function(v){FIELDS.forEach(function(f){out.push({v:v,f:f,st:v.st[f.k],date:v[f.k]});});});return out;}
+function card(k,v,cls,act,sub){return '<div class="card '+cls+'" onclick="cardGo(\''+act+'\')"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s">'+sub+'</div></div>';}
+function cardGo(a){
+  if(a==='total'){resetFilters(true);showTab('vehicles');}
+  else if(a==='active'){resetFilters(true);el('fStatus').value='active';renderVehicleTable();showTab('vehicles');}
+  else if(a==='missing'){resetFilters(true);el('fStatus').value='missing';renderVehicleTable();showTab('vehicles');}
+  else if(a==='near'){showTab('alerts');}
+  else if(a==='expired'){showTab('alerts');setTimeout(function(){el('expiredSec').scrollIntoView({behavior:'smooth'});},60);}
+}
+function renderDashboard(){
+  var items=allItems(),c={active:0,near:0,expired:0,missing:0},bt={},nd=S.data.nearDays;
+  FIELDS.forEach(function(f){bt[f.k]={active:0,near:0,expired:0,missing:0};});
+  items.forEach(function(i){c[i.st.s]++;bt[i.f.k][i.st.s]++;});
+  var h='<div class="cards">'+card('Total vehicles',S.data.vehicles.length,'total','total','Company-owned vehicles on record')+
+    card('Active documents',c.active,'active','active','Valid for more than '+nd+' days')+
+    card('Near expiry',c.near,'near','near','Expiring within '+nd+' days')+
+    card('Expired documents',c.expired,'expired','expired','Renewal overdue')+'</div>';
+  if(c.missing)h+='<div class="note" style="cursor:pointer" onclick="cardGo(\'missing\')">'+c.missing+' expiry date'+(c.missing>1?'s are':' is')+' not recorded yet. Select to review.</div>';
+  var near=items.filter(function(i){return i.st.s==='near';}).sort(function(a,b){return a.st.d-b.st.d;});
+  var exp=items.filter(function(i){return i.st.s==='expired';}).sort(function(a,b){return a.st.d-b.st.d;});
+  function mini(list,empty){if(!list.length)return '<div class="muted" style="padding:10px 0">'+empty+'</div>';
+    return '<div class="mini-list">'+list.slice(0,6).map(function(i){return '<div class="it" onclick="viewVehicle('+js(i.v.id)+')"><div class="l"><b>'+esc(i.v.regNo)+'</b> · '+esc(i.v.owner)+'<div class="muted small">'+i.f.l+' · '+dd(i.date)+'</div></div><div><span class="chip '+i.st.s+'">'+daysTxt(i.st)+'</span></div></div>';}).join('')+'</div>';}
+  var dep={};S.data.vehicles.forEach(function(v){var k=v.department||'Not assigned';dep[k]=dep[k]||{n:0,near:0,exp:0};dep[k].n++;FIELDS.forEach(function(f){if(v.st[f.k].s==='near')dep[k].near++;if(v.st[f.k].s==='expired')dep[k].exp++;});});
+  h+='<div class="grid2"><div>'+
+    '<div class="panel"><h3>Status by document</h3><div class="tbl-wrap"><table><thead><tr><th>Document</th><th>Active</th><th>Near expiry</th><th>Expired</th><th>Not recorded</th></tr></thead><tbody>'+
+    FIELDS.map(function(f){var b=bt[f.k];return '<tr><td><b>'+f.l+'</b></td><td class="num">'+b.active+'</td><td class="num">'+(b.near?'<span class="chip near">'+b.near+'</span>':'0')+'</td><td class="num">'+(b.expired?'<span class="chip expired">'+b.expired+'</span>':'0')+'</td><td class="num">'+b.missing+'</td></tr>';}).join('')+
+    '</tbody></table></div></div>'+
+    '<div class="panel"><h3>By department / section</h3><div class="tbl-wrap"><table><thead><tr><th>Department</th><th>Vehicles</th><th>Near expiry</th><th>Expired</th></tr></thead><tbody>'+
+    (Object.keys(dep).length?Object.keys(dep).sort().map(function(k){var d=dep[k];return '<tr class="click" onclick="deptGo('+js(k)+')"><td>'+esc(k)+'</td><td class="num">'+d.n+'</td><td class="num">'+d.near+'</td><td class="num">'+d.exp+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">No vehicles yet.</td></tr>')+
+    '</tbody></table></div></div></div>'+
+    '<div><div class="panel"><div class="head-row"><h3>Expiring soon</h3><a href="#" onclick="showTab(\'alerts\');return false">View all ('+near.length+')</a></div>'+mini(near,'Nothing expiring in the next '+nd+' days.')+'</div>'+
+    '<div class="panel"><div class="head-row"><h3>Expired</h3><a href="#" onclick="cardGo(\'expired\');return false">View all ('+exp.length+')</a></div>'+mini(exp,'No expired documents.')+'</div></div></div>';
+  el('tab-dashboard').innerHTML=h;
+}
+function deptGo(d){resetFilters(true);if(d!=='Not assigned'){el('fDept').value=d;}renderVehicleTable();showTab('vehicles');}
+
+/* ---------- vehicles ---------- */
+function renderVehicles(){deptOptions('fDept');renderVehicleTable();}
+function resetFilters(silent){el('fSearch').value='';el('fDept').value='';el('fDoc').value='';el('fStatus').value='';el('fSort').value='urgent';if(!silent)renderVehicleTable();}
+function filteredVehicles(){
+  var q=el('fSearch').value.trim().toLowerCase(),dep=el('fDept').value,dt=el('fDoc').value,st=el('fStatus').value;
+  var fs=dt?FIELDS.filter(function(f){return f.k===dt;}):FIELDS;
+  var list=S.data.vehicles.filter(function(v){
+    if(dep&&v.department!==dep)return false;
+    if(q){var hay=[v.regNo,v.model,v.year,v.owner,v.designation,v.department,v.civilId,v.remarks].join(' ').toLowerCase();if(hay.indexOf(q)<0)return false;}
+    if(st==='active'){if(!fs.every(function(f){return v.st[f.k].s==='active';}))return false;}
+    else if(st){if(!fs.some(function(f){return v.st[f.k].s===st;}))return false;}
+    return true;
+  });
+  var so=el('fSort').value,cmp=function(a,b,k){return String(a[k]).localeCompare(String(b[k]));};
+  list.sort(function(a,b){if(so==='reg')return cmp(a,b,'regNo');if(so==='owner')return cmp(a,b,'owner');if(so==='dept')return cmp(a,b,'department')||cmp(a,b,'regNo');
+    return (a.minDays-b.minDays)||cmp(a,b,'regNo');});
+  return list;
+}
+function renderVehicleTable(){
+  if(!S.data)return;
+  var list=filteredVehicles();
+  el('vCount').textContent='Showing '+list.length+' of '+S.data.vehicles.length+' vehicles';
+  el('vBody').innerHTML=list.length?list.map(function(v){
+    return '<tr class="click" onclick="viewVehicle('+js(v.id)+')"><td><b>'+esc(v.regNo)+'</b></td><td>'+esc(v.model)+(v.year?' <span class="muted">('+esc(v.year)+')</span>':'')+'</td><td>'+esc(v.department)+'</td>'+
+      '<td>'+esc(v.owner)+'<div class="muted small">'+esc(v.designation)+'</div></td>'+
+      FIELDS.map(function(f){return '<td>'+chip(v.st[f.k],v[f.k])+'</td>';}).join('')+
+      '<td class="num">'+(v.files?'<span class="pill">'+v.files+'</span>':'<span class="muted">0</span>')+'</td><td><button class="btn sec sm">View</button></td></tr>';
+  }).join(''):'<tr><td colspan="10" class="empty">No vehicles match these filters.</td></tr>';
+}
+function viewVehicle(id){
+  var v=findV(id);if(!v)return;
+  var docs=S.data.documents.filter(function(d){return d.vehicleId===id;});
+  function kv(k,val){return '<div class="kv"><div class="k">'+k+'</div><div class="v">'+(val?esc(val):'<span class="muted">—</span>')+'</div></div>';}
+  var h='<div class="dgrid">'+kv('Registration No.',v.regNo)+kv('Vehicle model',v.model)+kv('Year of manufacture',v.year)+kv('Department / Section',v.department)+
+    kv('Owner',v.owner)+kv('Designation',v.designation)+kv('Owner Civil ID No.',v.civilId)+kv('Last updated',v.updatedAt+(v.updatedBy?' by '+v.updatedBy:''))+'</div>'+
+    '<h4>Document validity</h4><div class="vstat">'+FIELDS.map(function(f){var st=v.st[f.k];return '<div class="b"><div class="k">'+f.l+'</div>'+chip(st,v[f.k])+'<div class="d">'+daysTxt(st)+'</div></div>';}).join('')+'</div>'+
+    (v.remarks?'<h4>Remarks</h4><div style="white-space:pre-wrap">'+esc(v.remarks)+'</div>':'')+
+    '<h4>Uploaded files ('+docs.length+')</h4>'+docList(docs,false)+
+    '<div class="actions">'+(canEdit()?'<button class="btn" onclick="editVehicle('+js(id)+')">Edit record and files</button>':'')+'<button class="btn sec" onclick="closeModal()">Close</button></div>';
+  openModal('Vehicle '+v.regNo,h,{wide:true});
+}
+function editVehicle(id){closeModal();showTab('manage');selectManage(id);}
+function docList(docs,del){
+  if(!docs.length)return '<div class="muted">No files uploaded.</div>';
+  return docs.map(function(d){return '<div class="docrow"><div><span class="pill">'+esc(d.type)+'</span> <span class="nm">'+esc(d.name)+'</span><div class="muted small">'+kb(d.sizeKB)+' · '+esc(d.uploadedAt)+' · '+esc(d.uploadedBy)+'</div></div>'+
+    '<div class="bt"><button class="btn sec sm" onclick="openDoc('+js(d.id)+',\'view\')">View</button><button class="btn sec sm" onclick="openDoc('+js(d.id)+',\'dl\')">Download</button>'+
+    (del?'<button class="btn danger sm" onclick="delDoc('+js(d.id)+')">Delete</button>':'')+'</div></div>';}).join('');
+}
+function b64Blob(b64,mime){var bin=atob(b64),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime});}
+function saveBlob(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},4000);}
+function openDoc(id,mode){
+  call('getDocument',S.token,id).then(function(f){
+    var blob=b64Blob(f.b64,f.mime);
+    if(mode==='dl'){saveBlob(blob,f.name);return;}
+    if(/^image\/(jpeg|png|webp)$/.test(f.mime)){
+      openModal(f.name,'<img class="preview" src="data:'+f.mime+';base64,'+f.b64+'" alt=""><div class="actions"><button class="btn" id="pvDl">Download</button><button class="btn sec" onclick="closeModal()">Close</button></div>',{wide:true});
+      el('pvDl').onclick=function(){saveBlob(blob,f.name);};return;
+    }
+    var w=window.open(URL.createObjectURL(blob),'_blank');
+    if(!w){toast('Pop-up blocked — the file has been downloaded instead.');saveBlob(blob,f.name);}
+  }).catch(fail);
+}
+
+/* ---------- alerts ---------- */
+function renderAlerts(){
+  if(!S.data)return;
+  deptOptions('aDept');
+  var q=el('aSearch').value.trim().toLowerCase(),dep=el('aDept').value,dt=el('aDoc').value;
+  var items=allItems().filter(function(i){
+    if(dt&&i.f.k!==dt)return false;if(dep&&i.v.department!==dep)return false;
+    if(q&&[i.v.regNo,i.v.owner,i.v.model,i.v.department,i.v.civilId].join(' ').toLowerCase().indexOf(q)<0)return false;return true;});
+  S.nearList=items.filter(function(i){return i.st.s==='near';}).sort(function(a,b){return a.st.d-b.st.d;});
+  S.expList=items.filter(function(i){return i.st.s==='expired';}).sort(function(a,b){return a.st.d-b.st.d;});
+  el('nearSec').innerHTML=alertBlock('Near expiry — within '+S.data.nearDays+' days',S.nearList,'near','No documents expire within the next '+S.data.nearDays+' days.');
+  el('expiredSec').innerHTML=alertBlock('Expired documents',S.expList,'expired','No expired documents.');
+}
+function alertBlock(title,list,kind,empty){
+  return '<div class="head-row"><h3>'+title+' <span class="chip '+kind+'">'+list.length+'</span></h3>'+(list.length?'<button class="btn sec sm" onclick="exportAlerts(\''+kind+'\')">Download CSV</button>':'')+'</div>'+
+    '<div class="tbl-wrap"><table><thead><tr><th>Reg. No.</th><th>Owner</th><th>Department</th><th>Document</th><th>Expiry date</th><th>Status</th><th></th></tr></thead><tbody>'+
+    (list.length?list.map(function(i){return '<tr class="click" onclick="viewVehicle('+js(i.v.id)+')"><td><b>'+esc(i.v.regNo)+'</b></td><td>'+esc(i.v.owner)+'<div class="muted small">'+esc(i.v.designation)+'</div></td><td>'+esc(i.v.department)+'</td><td>'+i.f.l+'</td><td>'+dd(i.date)+'</td><td><span class="chip '+i.st.s+'">'+daysTxt(i.st)+'</span></td><td><button class="btn sec sm">View</button></td></tr>';}).join('')
+    :'<tr><td colspan="7" class="empty">'+empty+'</td></tr>')+'</tbody></table></div>';
+}
+
+/* ---------- CSV export ---------- */
+function csvCell(v){var s=String(v==null?'':v);if(/^\d{9,}$/.test(s))return '="'+s+'"';if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
+function downloadCsv(rows,name){var csv='\uFEFF'+rows.map(function(r){return r.map(csvCell).join(',');}).join('\r\n');saveBlob(new Blob([csv],{type:'text/csv;charset=utf-8'}),name+'_'+S.data.today+'.csv');call('logEvent',S.token,'EXPORT_CSV',name).catch(function(){});}
+function exportVehicles(){
+  var rows=[['Registration No.','Vehicle Model','Year','Department / Section','Owner','Designation','Daftar Expiry','Daftar Status','Insurance Expiry','Insurance Status','Driving Licence Expiry','Licence Status','Owner Civil ID No.','Civil ID Expiry','Civil ID Status','Files','Remarks']];
+  filteredVehicles().forEach(function(v){rows.push([v.regNo,v.model,v.year,v.department,v.owner,v.designation,v.daftar,daysTxt(v.st.daftar),v.insurance,daysTxt(v.st.insurance),v.license,daysTxt(v.st.license),v.civilId,v.civilExpiry,daysTxt(v.st.civilExpiry),v.files,v.remarks]);});
+  downloadCsv(rows,'vehicles');
+}
+function exportAlerts(kind){
+  var list=kind==='near'?S.nearList:S.expList,rows=[['Registration No.','Vehicle Model','Owner','Designation','Department / Section','Document','Expiry Date','Status']];
+  list.forEach(function(i){rows.push([i.v.regNo,i.v.model,i.v.owner,i.v.designation,i.v.department,i.f.l,i.date,daysTxt(i.st)]);});
+  downloadCsv(rows,kind==='near'?'near_expiry':'expired');
+}
+
+/* ---------- data management ---------- */
+function renderManage(){
+  var ds={};S.data.vehicles.forEach(function(v){if(v.department)ds[v.department]=1;});
+  el('deptList').innerHTML=Object.keys(ds).sort().map(function(d){return '<option value="'+esc(d)+'">';}).join('');
+  if(S.editId&&!findV(S.editId))S.editId=null;
+  fillForm(S.editId?findV(S.editId):null);renderManageList();renderManageDocs();
+}
+function renderManageList(){
+  var q=el('mSearch').value.trim().toLowerCase();
+  var list=S.data.vehicles.filter(function(v){return !q||[v.regNo,v.owner,v.model,v.department].join(' ').toLowerCase().indexOf(q)>-1;})
+    .sort(function(a,b){return String(a.regNo).localeCompare(String(b.regNo));});
+  el('mList').innerHTML=list.length?list.map(function(v){return '<div class="it'+(v.id===S.editId?' on':'')+'" onclick="selectManage('+js(v.id)+')"><b>'+esc(v.regNo)+'</b> <span class="chip '+v.worst+'" style="float:right">'+({expired:'Expired',near:'Near expiry',missing:'Incomplete',active:'Active'})[v.worst]+'</span><div class="muted small">'+esc(v.owner)+' · '+esc(v.model)+'</div></div>';}).join('')
+    :'<div class="empty">No records.</div>';
+}
+function selectManage(id){S.editId=id;fillForm(findV(id));renderManageList();renderManageDocs();el('mForm').scrollIntoView({behavior:'smooth',block:'start'});}
+function newVehicle(){S.editId=null;fillForm(null);renderManageList();renderManageDocs();el('mModel').focus();}
+function fillForm(v){
+  var m={mModel:'model',mYear:'year',mReg:'regNo',mDept:'department',mOwner:'owner',mDesig:'designation',mDaftar:'daftar',mIns:'insurance',mLic:'license',mCivil:'civilId',mCivilExp:'civilExpiry',mRemarks:'remarks'};
+  Object.keys(m).forEach(function(k){el(k).value=v?(v[m[k]]||''):'';});
+  el('mTitle').textContent=v?'Edit vehicle — '+v.regNo:'Add new vehicle';
+  el('mMeta').textContent=v?(v.id+' · updated '+v.updatedAt+(v.updatedBy?' by '+v.updatedBy:'')):'';
+  el('mDel').classList.toggle('hidden',!v);el('mSave').textContent=v?'Save changes':'Save vehicle';
+}
+function saveForm(ev){
+  ev.preventDefault();
+  var o={id:S.editId,model:el('mModel').value,year:el('mYear').value,regNo:el('mReg').value,department:el('mDept').value,owner:el('mOwner').value,designation:el('mDesig').value,
+    daftar:el('mDaftar').value,insurance:el('mIns').value,license:el('mLic').value,civilId:el('mCivil').value.replace(/\s/g,''),civilExpiry:el('mCivilExp').value,remarks:el('mRemarks').value};
+  if(o.civilId&&!/^\d{12}$/.test(o.civilId)){toast('Civil ID number must be 12 digits.','err');return false;}
+  call('saveVehicle',S.token,o).then(function(r){S.editId=r.id;toast(r.created?'Vehicle added. You can now upload its documents.':'Changes saved.');return loadData();}).catch(fail);
+  return false;
+}
+function delVehicle(){
+  var v=findV(S.editId);if(!v)return;
+  confirmBox('Delete vehicle <b>'+esc(v.regNo)+'</b> ('+esc(v.owner)+') and all '+v.files+' uploaded file(s)? Files are moved to Google Drive trash.','Delete vehicle').then(function(ok){
+    if(!ok)return;call('deleteVehicle',S.token,v.id).then(function(){S.editId=null;toast('Vehicle deleted.');return loadData();}).catch(fail);});
+}
+function renderManageDocs(){
+  if(!S.editId){el('mDocs').innerHTML='<h3>Documents</h3><div class="muted">Save the vehicle record first, then upload the Civil ID, licence, Daftar, insurance and other files here.</div>';return;}
+  var docs=S.data.documents.filter(function(d){return d.vehicleId===S.editId;});
+  el('mDocs').innerHTML='<h3>Documents ('+docs.length+')</h3>'+
+    '<div class="row"><div><label>Document type</label><select id="uType">'+S.data.docTypes.map(function(t){return '<option>'+esc(t)+'</option>';}).join('')+'</select></div>'+
+    '<div><label>Files (PDF, JPG, PNG, WEBP, HEIC · max '+MAX_MB+' MB each)</label><input id="uFile" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.heif"></div>'+
+    '<button class="btn" onclick="uploadDocs()">Upload</button></div><div style="margin-top:14px">'+docList(docs,true)+'</div>';
+}
+function mimeOf(f){var ext=(f.name.split('.').pop()||'').toLowerCase();return MIME[ext]||'';}
+function uploadOne(f,type,vid){
+  return new Promise(function(res,rej){
+    var mime=mimeOf(f);
+    if(!mime)return rej(new Error(f.name+': unsupported file type.'));
+    if(f.size>MAX_MB*1048576)return rej(new Error(f.name+' is larger than '+MAX_MB+' MB.'));
+    var r=new FileReader();
+    r.onload=function(){var b64=String(r.result).split(',')[1]||'';call('uploadDocument',S.token,vid,type,f.name,mime,b64).then(res,rej);};
+    r.onerror=function(){rej(new Error('Could not read '+f.name));};
+    r.readAsDataURL(f);
+  });
+}
+function uploadDocs(){
+  var files=Array.prototype.slice.call(el('uFile').files||[]),type=el('uType').value,vid=S.editId,done=0;
+  if(!files.length){toast('Choose at least one file.','err');return;}
+  var chain=Promise.resolve();
+  files.forEach(function(f){chain=chain.then(function(){return uploadOne(f,type,vid).then(function(){done++;});});});
+  chain.then(function(){toast(done+' file'+(done>1?'s':'')+' uploaded.');return loadData();})
+    .catch(function(e){fail(e);if(done)loadData();});
+}
+function delDoc(id){
+  var d=S.data.documents.filter(function(x){return x.id===id;})[0];if(!d)return;
+  confirmBox('Delete <b>'+esc(d.name)+'</b>? It is moved to Google Drive trash.','Delete file').then(function(ok){
+    if(!ok)return;call('deleteDocument',S.token,id).then(function(){toast('File deleted.');return loadData();}).catch(fail);});
+}
+
+/* ---------- administration ---------- */
+function loadAdmin(){
+  if(!isAdmin())return;
+  el('sNear').value=S.data.nearDays;el('sEmails').value=S.data.alertEmails||'';
+  el('aLinks').innerHTML='<a href="'+esc(S.data.sheetUrl)+'" target="_blank" rel="noopener">Open data sheet (Google Sheets)</a><br><a href="'+esc(S.data.folderUrl)+'" target="_blank" rel="noopener">Open files and backups folder (Google Drive)</a>';
+  loadUsers();loadAudit();
+}
+function loadUsers(){
+  call('listUsers',S.token).then(function(u){S.users=u;
+    el('uBody').innerHTML=u.map(function(x){
+      var st=x.active?(x.locked?'<span class="chip near">Locked</span>':'<span class="chip active">Active</span>'):'<span class="chip missing">Inactive</span>';
+      if(x.mustChange)st+=' <span class="muted small">temp. password</span>';
+      return '<tr><td><b>'+esc(x.username)+'</b></td><td>'+esc(x.fullName)+'</td><td><span class="pill">'+esc(x.role)+'</span></td><td>'+st+'</td><td>'+esc(x.lastLogin||'—')+'</td>'+
+        '<td style="white-space:nowrap"><button class="btn sec sm" onclick="userForm('+js(x.username)+')">Edit</button> <button class="btn sec sm" onclick="resetPw('+js(x.username)+')">Reset password</button> '+
+        (x.username!==S.data.user.username?'<button class="btn danger sm" onclick="delUser('+js(x.username)+')">Delete</button>':'')+'</td></tr>';}).join('');
+  }).catch(fail);
+}
+function loadAudit(){
+  call('getAudit',S.token).then(function(a){
+    el('auBody').innerHTML=a.length?a.map(function(x){return '<tr><td style="white-space:nowrap">'+esc(x.time)+'</td><td>'+esc(x.user)+'</td><td><span class="pill">'+esc(x.action)+'</span></td><td>'+esc(x.details)+'</td></tr>';}).join(''):'<tr><td colspan="4" class="empty">No activity yet.</td></tr>';
+  }).catch(fail);
+}
+function userForm(username){
+  var u=username?S.users.filter(function(x){return x.username===username;})[0]:null;
+  var h='<form onsubmit="return saveUserForm(event,'+(u?'false':'true')+')">'+
+    '<label>Username</label><input id="ufUser" value="'+esc(u?u.username:'')+'" '+(u?'disabled':'required pattern="[A-Za-z0-9._\\-]{3,30}"')+'>'+
+    '<label>Full name</label><input id="ufName" maxlength="80" value="'+esc(u?u.fullName:'')+'">'+
+    '<label>Role</label><select id="ufRole">'+['Viewer','Editor','Admin'].map(function(r){return '<option'+(u&&u.role===r?' selected':'')+'>'+r+'</option>';}).join('')+'</select>'+
+    '<div class="muted small" style="margin-top:6px">Viewer: view and download only · Editor: also add, edit and delete records and files · Admin: also users, settings and audit log</div>'+
+    '<label>Status</label><select id="ufActive"><option value="1">Active</option><option value="0"'+(u&&!u.active?' selected':'')+'>Inactive</option></select>'+
+    '<div class="actions"><button class="btn" type="submit">'+(u?'Save changes':'Create user')+'</button><button class="btn sec" type="button" onclick="closeModal()">Cancel</button></div></form>';
+  openModal(u?'Edit user':'Add user',h);
+}
+function saveUserForm(ev,isNew){
+  ev.preventDefault();
+  var o={isNew:isNew,username:el('ufUser').value,fullName:el('ufName').value,role:el('ufRole').value,active:el('ufActive').value==='1'};
+  call('saveUser',S.token,o).then(function(r){
+    if(r.tempPassword)showTemp(o.username,r.tempPassword);else{closeModal();toast('User updated.');}
+    loadUsers();loadAudit();
+  }).catch(fail);return false;
+}
+function resetPw(u){confirmBox('Reset the password for <b>'+esc(u)+'</b>? Their current sessions end immediately.','Reset password').then(function(ok){
+  if(!ok)return;call('resetUserPassword',S.token,u).then(function(r){showTemp(u,r.tempPassword);loadUsers();}).catch(fail);});}
+function delUser(u){confirmBox('Delete user <b>'+esc(u)+'</b>? This cannot be undone.','Delete user').then(function(ok){
+  if(!ok)return;call('deleteUser',S.token,u).then(function(){toast('User deleted.');loadUsers();loadAudit();}).catch(fail);});}
+function showTemp(u,pw){
+  openModal('Temporary password','<p>Share this temporary password with <b>'+esc(u)+'</b> privately. They must set a new password at first sign-in.</p><div class="code" id="tmpPw">'+esc(pw)+'</div>'+
+    '<div class="actions"><button class="btn" onclick="copyTemp()">Copy</button><button class="btn sec" onclick="closeModal()">Done</button></div>');
+}
+function copyTemp(){var t=el('tmpPw').textContent;try{navigator.clipboard.writeText(t).then(function(){toast('Copied.');},function(){toast('Select the password and copy it manually.');});}catch(e){toast('Select the password and copy it manually.');}}
+function saveSettingsForm(ev){
+  ev.preventDefault();
+  call('saveSettings',S.token,{nearDays:el('sNear').value,alertEmails:el('sEmails').value}).then(function(){toast('Settings saved.');return loadData();}).catch(fail);return false;
+}
+function runBackup(){call('backupNow',S.token).then(function(n){toast('Backup created: '+n);loadAudit();}).catch(fail);}
+
+/* ---------- password ---------- */
+function openChangePw(forced){
+  var h=(forced?'<div class="note">For security, set a new password before continuing.</div>':'')+
+    '<form onsubmit="return submitPw(event)"><label>Current password</label><input id="cp1" type="password" autocomplete="current-password" required>'+
+    '<label>New password</label><input id="cp2" type="password" autocomplete="new-password" minlength="8" required>'+
+    '<label>Confirm new password</label><input id="cp3" type="password" autocomplete="new-password" required>'+
+    '<div class="muted small" style="margin-top:6px">At least 8 characters, with letters and numbers.</div>'+
+    '<div class="actions"><button class="btn" type="submit">Update password</button>'+(forced?'<button class="btn sec" type="button" onclick="logout()">Sign out</button>':'<button class="btn sec" type="button" onclick="closeModal()">Cancel</button>')+'</div></form>';
+  openModal('Change password',h,{locked:forced});
+}
+function submitPw(ev){
+  ev.preventDefault();
+  if(el('cp2').value!==el('cp3').value){toast('The new passwords do not match.','err');return false;}
+  call('changePassword',S.token,el('cp1').value,el('cp2').value).then(function(r){
+    S.token=r.token;store('vm_t',r.token);closeModal(true);toast('Password updated.');return loadData();
+  }).catch(fail);return false;
+}
+
+/* ---------- modal ---------- */
+function openModal(title,html,o){
+  o=o||{};S.locked=!!o.locked;
+  el('modalTitle').textContent=title;el('modalBody').innerHTML=html;
+  el('modalBox').classList.toggle('wide',!!o.wide);el('modalX').classList.toggle('hidden',S.locked);
+  el('modal').classList.remove('hidden');
+}
+function closeModal(force){if(S.locked&&force!==true)return;S.locked=false;el('modal').classList.add('hidden');el('modalBody').innerHTML='';if(S._cf){var f=S._cf;S._cf=null;f(false);}}
+function confirmBox(msg,label){
+  return new Promise(function(res){
+    openModal('Please confirm','<p>'+msg+'</p><div class="actions"><button class="btn danger" id="cfOk">'+esc(label||'Confirm')+'</button><button class="btn sec" onclick="closeModal()">Cancel</button></div>');
+    S._cf=res;el('cfOk').onclick=function(){S._cf=null;closeModal();res(true);};
+  });
+}
+
+/* ---------- init ---------- */
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+['click','keydown','mousemove','touchstart','scroll'].forEach(function(ev){document.addEventListener(ev,function(){S.last=Date.now();},{passive:true});});
+setInterval(function(){if(S.token&&Date.now()-S.last>IDLE_MIN*60000)logout('You were signed out after '+IDLE_MIN+' minutes of inactivity.');},30000);
+(function(){
+  if(LOGO_URL){var img='<img src="'+esc(LOGO_URL)+'" alt="%%ORG%%">';el('lLogo').innerHTML=img;el('hLogo').innerHTML=img;}
+  var t=recall('vm_t');
+  if(t){S.token=t;el('login').classList.add('hidden');
+    call('getData',t).then(function(d){S.data=d;enrich();showApp();render();})
+      .catch(function(e){if(e.message.indexOf('PASSWORD_CHANGE_REQUIRED')<0&&e.message.indexOf('SESSION_EXPIRED')<0)endSession('');});}
+  else el('lUser').focus();
+})();
+</script>
+</body></html>
